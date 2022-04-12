@@ -166,27 +166,43 @@ function createCSV(responses) {
     "cacheStatus",
   ];
 
+  function checkIfExists(prop) {
+    console.log(prop);
+
+    if (prop) {
+      if (typeof prop === "string") {
+        if (prop.includes(",")) {
+          return prop.split(",").join("_");
+        }
+      }
+
+      return prop;
+    }
+
+    return "null";
+  }
+
   const csvString = [
     header,
     ...responses.map((response) => [
-      response.url || "null",
-      response.preset || "null",
-      response.contentType || "null",
-      response.contentLength || "null",
-      response.width || "null",
-      response.height || "null",
-      response.ua?.split(",").join("_") || "null",
-      response.server || "null",
-      response.encodingQuality || "null",
-      response.staging?.split(",").join("_") || "null",
-      response.fileName?.split(",").join("_") || "null",
-      response.originalFormat || "null",
-      response.originalSize || "null",
-      response.originalWidth || "null",
-      response.resultWidth || "null",
-      response.pixelDensity?.split(",").join("_") || "null",
-      response.cacheKey?.split(",").join("_") || "null",
-      response.cacheStatus?.split(",").join("_") || "null",
+      checkIfExists(response.url),
+      checkIfExists(response.preset),
+      checkIfExists(response.contentType),
+      checkIfExists(response.contentLength),
+      checkIfExists(response.width),
+      checkIfExists(response.height),
+      checkIfExists(response.ua),
+      checkIfExists(response.server),
+      checkIfExists(response.encodingQuality),
+      checkIfExists(response.staging),
+      checkIfExists(response.fileName),
+      checkIfExists(response.originalFormat),
+      checkIfExists(response.originalSize),
+      checkIfExists(response.resultWidth),
+      checkIfExists(response.pixelDensity),
+      checkIfExists(response.originalWidth),
+      checkIfExists(response.cacheKey),
+      checkIfExists(response.cacheStatus),
     ]),
   ]
     .map((e) => e.join(","))
