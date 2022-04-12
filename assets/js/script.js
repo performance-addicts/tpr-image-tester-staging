@@ -1,11 +1,12 @@
 // base url
 let imgCode = "https://images.coach.com/is/image/Coach/c8529_b4ta7_a0";
 // image paths
-const COACH_DOMAIN = "https://images.coach.com/is/image/Coach/";
+const COACH_DOMAIN =
+  "https://wildcardsan.coach.com.edgekey-staging.net/is/image/Coach/";
 const SW_DOMAIN =
-  "https://images.stuartweitzman.com/is/image/stuartweitzmanonline/";
-const KS_DOMAIN = "https://images.katespade.com/is/image/KateSpade/";
-
+  "https://wildcardsan.stuart.com.edgekey-staging.net/is/image/stuartweitzmanonline/";
+const KS_DOMAIN =
+  "https://wildcardsan.kate.com.edgekey-staging.net/is/image/KateSpade/";
 // selectors
 const $form = document.getElementById("url-check");
 const $template = document.querySelector("#product");
@@ -44,6 +45,7 @@ const presets = [
   const data = await postToServer(presets)
     .then(awaitJson)
     .then((response) => response);
+  console.log(data);
   await createAllImgs(data);
   document.querySelector("#loading").textContent = "";
 })();
@@ -89,10 +91,11 @@ function awaitJson(responses) {
 }
 
 function formatDataAndImg(response) {
+  console.log(response);
   return new Promise((resolve, reject) => {
     const img = new Image();
 
-    img.src = response.url;
+    img.src = response.imgBody;
 
     const clone = $template.content.cloneNode(true);
     width = "";
@@ -103,12 +106,13 @@ function formatDataAndImg(response) {
         clearInterval(poll);
         width = img.naturalWidth;
         height = img.naturalHeight;
+        console.log(img.naturalHeight);
         // img.height = img.naturalHeight;
         // img.width = img.naturalWidth;
-
-        const responseClone = { ...response, width, height };
-
-        resolve({ responseClone, clone, img, response });
+        const { data } = response;
+        const responseClone = { ...data, width, height };
+        console.log(data);
+        resolve({ responseClone, clone, img, data });
       }
     }, 10);
   });
@@ -121,14 +125,16 @@ set up template
 make sure img width is available before writing html
 */
 async function createAllImgs(responses) {
+  // console.log(responses);
   const csvData = [];
   for (const jsonResponse of responses) {
-    const { responseClone, clone, img, response } = await formatDataAndImg(
+    const { responseClone, clone, img, data } = await formatDataAndImg(
       jsonResponse
     );
 
     csvData.push(responseClone);
-    writeHTML(clone, img, response);
+    // console.log(response);
+    writeHTML(clone, img, data);
   }
   createCSV(csvData);
 }
@@ -172,7 +178,7 @@ function createCSV(responses) {
       response.ua.split(",").join("_"),
       response.server,
       response.encodingQuality,
-      response.staging,
+      response.staging.split(",").join("_"),
       response.fileName.split(",").join("_"),
       response.originalFormat,
       response.originalSize,
@@ -195,6 +201,7 @@ function createCSV(responses) {
 }
 
 function writeHTML(clone, img, json) {
+  console.log(json);
   const h2 = clone.querySelector("h2");
 
   h2.textContent = json.preset || "No Preset";
@@ -272,9 +279,9 @@ $form.addEventListener("submit", async (e) => {
 
   const value = document.getElementById("url").value.trim();
   if (
-    !value.includes(COACH_DOMAIN) &&
-    !value.includes(SW_DOMAIN) &&
-    !value.includes(KS_DOMAIN)
+    !value.includes("images.coach.com") &&
+    !value.includes("images.stuartweitzman.com") &&
+    !value.includes("images.katespade.com")
   ) {
     document.getElementById("url").value = "";
     return alert("URL is not from a supported domain");
@@ -287,6 +294,7 @@ $form.addEventListener("submit", async (e) => {
   const data = await postToServer(presets)
     .then(awaitJson)
     .then((response) => response);
+
   await createAllImgs(data);
 });
 
@@ -350,14 +358,6 @@ const infoHTML = `
             <li>Requesting User Agent (from client browser)</li>
             <li>
               Staging Header
-              <ul>
-                <li>
-                  When viewing on your local machine the Image Preview and the
-                  width and height will match staging but all the other details
-                  will be production info. Running this app locally will always
-                  show correct info on staging.
-                </li>
-              </ul>
             </li>
             <li>
               Server - Akamai Image Manager (offline optimization) or Akamai
