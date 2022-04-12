@@ -1,4 +1,4 @@
-# TTapestry Akamai Staging Product Image Tester
+# Tapestry Akamai Staging Product Image Tester
 
 https://tpr-image-tester-staging.netlify.app/
 
