@@ -1,9 +1,10 @@
 // Docs on event and context https://www.netlify.com/docs/functions/#the-handler-method
 const fetch = (...args) =>
   import("node-fetch").then(({ default: fetch }) => fetch(...args));
+
 const handler = async (event) => {
   const json = JSON.parse(event.body);
-  // console.log(json);
+  // FIXME: clean this up
 
   let host = "";
   if (json.url.includes("coach")) {

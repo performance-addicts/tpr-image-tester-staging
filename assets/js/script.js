@@ -1,12 +1,17 @@
 // base url
 let imgCode = "https://images.coach.com/is/image/Coach/c8529_b4ta7_a0";
-// image paths
-const COACH_DOMAIN =
-  "https://wildcardsan.coach.com.edgekey-staging.net/is/image/Coach/";
+// // image paths
+// const COACH_DOMAIN =
+//   "https://wildcardsan.coach.com.edgekey-staging.net/is/image/Coach/";
+// const SW_DOMAIN =
+//   "https://wildcardsan.stuart.com.edgekey-staging.net/is/image/stuartweitzmanonline/";
+// const KS_DOMAIN =
+//   "https://wildcardsan.kate.com.edgekey-staging.net/is/image/KateSpade/";
+
+const COACH_DOMAIN = "https://images.coach.com/is/image/Coach/";
 const SW_DOMAIN =
-  "https://wildcardsan.stuart.com.edgekey-staging.net/is/image/stuartweitzmanonline/";
-const KS_DOMAIN =
-  "https://wildcardsan.kate.com.edgekey-staging.net/is/image/KateSpade/";
+  "https://images.stuartweitzman.com/is/image/stuartweitzmanonline/";
+const KS_DOMAIN = "https://images.katespade.com/is/image/KateSpade/";
 // selectors
 const $form = document.getElementById("url-check");
 const $template = document.querySelector("#product");
@@ -91,7 +96,6 @@ function awaitJson(responses) {
 }
 
 function formatDataAndImg(response) {
-  console.log(response);
   return new Promise((resolve, reject) => {
     const img = new Image();
 
@@ -106,12 +110,10 @@ function formatDataAndImg(response) {
         clearInterval(poll);
         width = img.naturalWidth;
         height = img.naturalHeight;
-        console.log(img.naturalHeight);
-        // img.height = img.naturalHeight;
-        // img.width = img.naturalWidth;
+
         const { data } = response;
         const responseClone = { ...data, width, height };
-        console.log(data);
+
         resolve({ responseClone, clone, img, data });
       }
     }, 10);
@@ -125,7 +127,6 @@ set up template
 make sure img width is available before writing html
 */
 async function createAllImgs(responses) {
-  // console.log(responses);
   const csvData = [];
   for (const jsonResponse of responses) {
     const { responseClone, clone, img, data } = await formatDataAndImg(
@@ -133,7 +134,7 @@ async function createAllImgs(responses) {
     );
 
     csvData.push(responseClone);
-    // console.log(response);
+
     writeHTML(clone, img, data);
   }
   createCSV(csvData);
@@ -167,8 +168,6 @@ function createCSV(responses) {
   ];
 
   function checkIfExists(prop) {
-    console.log(prop);
-
     if (prop) {
       if (typeof prop === "string") {
         if (prop.includes(",")) {
@@ -295,9 +294,9 @@ $form.addEventListener("submit", async (e) => {
 
   const value = document.getElementById("url").value.trim();
   if (
-    !value.includes("images.coach.com") &&
-    !value.includes("images.stuartweitzman.com") &&
-    !value.includes("images.katespade.com")
+    !value.includes(COACH_DOMAIN) &&
+    !value.includes(SW_DOMAIN) &&
+    !value.includes(KS_DOMAIN)
   ) {
     document.getElementById("url").value = "";
     return alert("URL is not from a supported domain");
