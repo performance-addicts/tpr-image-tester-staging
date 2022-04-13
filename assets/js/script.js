@@ -170,7 +170,7 @@ function createCSV(responses) {
   const link = document.createElement("a");
   link.textContent = "DOWNLOAD CSV";
   link.setAttribute("href", encodedUri);
-  link.setAttribute("download", `${imgCode}.csv`);
+  link.setAttribute("download", `stg-${imgCode}.csv`);
   $csv.appendChild(link);
 }
 
