@@ -44,14 +44,20 @@ const presets = [
   "$desktopProductZoom$",
   "",
 ];
-
+const handlePromise = (promise) =>
+  promise.then((res) => [null, res]).catch((err) => [err, null]);
 // first load
 (async () => {
-  const data = await postToServer(presets)
-    .then(awaitJson)
-    .then((response) => response);
-  console.log(data);
-  await createAllImgs(data);
+  const [err, data] = await handlePromise(postToServer(presets));
+  if (err) {
+    return console.error("error posting to server");
+  }
+
+  const [jsonErr, jsonSuccess] = await handlePromise(awaitJson(data));
+  if (jsonErr) {
+    return console.error("error handling json response of post");
+  }
+  await createAllImgs(jsonSuccess);
   document.querySelector("#loading").textContent = "";
 })();
 /*
@@ -67,13 +73,19 @@ async function postToServer(presets) {
 
     const url = `${imgCode}${preset ? "?" + preset : ""}`;
     const ua = navigator.userAgent;
-    const response = await fetch("/.netlify/functions/images/images", {
-      method: "POST",
-      body: JSON.stringify({ url: url, ua: ua, preset: preset }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const [error, response] = await handlePromise(
+      fetch("/.netlify/functions/images/images", {
+        method: "POST",
+        body: JSON.stringify({ url: url, ua: ua, preset: preset }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+    );
+
+    if (error) {
+      console.error(`error in netlify post at ${preset}`);
+    }
     responses.push(response);
   }
   return Promise.all(responses);
@@ -129,9 +141,13 @@ make sure img width is available before writing html
 async function createAllImgs(responses) {
   const csvData = [];
   for (const jsonResponse of responses) {
-    const { responseClone, clone, img, data } = await formatDataAndImg(
-      jsonResponse
+    const [error, { responseClone, clone, img, data }] = await handlePromise(
+      formatDataAndImg(jsonResponse)
     );
+
+    if (error) {
+      console.error(`error of formatDataAndImg ${jsonResponse}`);
+    }
 
     csvData.push(responseClone);
 
@@ -174,10 +190,8 @@ function createCSV(responses) {
           return prop.split(",").join("_");
         }
       }
-
       return prop;
     }
-
     return "null";
   }
 
@@ -229,7 +243,7 @@ function writeHTML(clone, img, json) {
   const dimensions = clone.querySelector(".dimensions");
   dimensions.textContent = `width: ${img.naturalWidth} height: ${img.naturalHeight}`;
   const a = clone.querySelector("a");
-  a.href = json.url;
+  // a.href = json.url;
 
   a.textContent = json.url;
   a.target = "_blank";
@@ -306,11 +320,16 @@ $form.addEventListener("submit", async (e) => {
   $csv.innerHTML = "";
   $root.innerHTML = "";
   $loading.classList.add("loader");
-  const data = await postToServer(presets)
-    .then(awaitJson)
-    .then((response) => response);
+  const [error, data] = await handlePromise(postToServer(presets));
+  if (error) {
+    return console.error("error posting to server");
+  }
 
-  await createAllImgs(data);
+  const [jsonErr, jsonSuccess] = await handlePromise(awaitJson(data));
+  if (jsonErr) {
+    return console.error("error handling json response of post");
+  }
+  await createAllImgs(jsonSuccess);
 });
 
 $infoButton.addEventListener("click", triggerAlert);
