@@ -50,7 +50,7 @@ const presets = [
   const data = await postToServer(presets)
     .then(awaitJson)
     .then((response) => response);
-  console.log(data);
+
   await createAllImgs(data);
   document.querySelector("#loading").textContent = "";
 })();
@@ -146,27 +146,6 @@ creates download link
 */
 
 function createCSV(responses) {
-  const header = [
-    "url",
-    "preset",
-    "contentType",
-    "contentLength",
-    "width",
-    "height",
-    "ua",
-    "server",
-    "encodingQuality",
-    "staging",
-    "fileName",
-    "originalFormat",
-    "originalSize",
-    "originalWidth",
-    "resultWidth",
-    "pixelDensity",
-    "cacheKey",
-    "cacheStatus",
-  ];
-
   function checkIfExists(prop) {
     if (prop) {
       if (typeof prop === "string") {
@@ -174,35 +153,15 @@ function createCSV(responses) {
           return prop.split(",").join("_");
         }
       }
-
       return prop;
     }
-
     return "null";
   }
-
   const csvString = [
-    header,
-    ...responses.map((response) => [
-      checkIfExists(response.url),
-      checkIfExists(response.preset),
-      checkIfExists(response.contentType),
-      checkIfExists(response.contentLength),
-      checkIfExists(response.width),
-      checkIfExists(response.height),
-      checkIfExists(response.ua),
-      checkIfExists(response.server),
-      checkIfExists(response.encodingQuality),
-      checkIfExists(response.staging),
-      checkIfExists(response.fileName),
-      checkIfExists(response.originalFormat),
-      checkIfExists(response.originalSize),
-      checkIfExists(response.resultWidth),
-      checkIfExists(response.pixelDensity),
-      checkIfExists(response.originalWidth),
-      checkIfExists(response.cacheKey),
-      checkIfExists(response.cacheStatus),
-    ]),
+    [...Object.keys(...responses)],
+    ...responses.map((response) =>
+      [...Object.values(response)].map((item) => checkIfExists(item))
+    ),
   ]
     .map((e) => e.join(","))
     .join("\n");
@@ -216,7 +175,6 @@ function createCSV(responses) {
 }
 
 function writeHTML(clone, img, json) {
-  console.log(json);
   const h2 = clone.querySelector("h2");
 
   h2.textContent = json.preset || "No Preset";
@@ -229,7 +187,6 @@ function writeHTML(clone, img, json) {
   const dimensions = clone.querySelector(".dimensions");
   dimensions.textContent = `width: ${img.naturalWidth} height: ${img.naturalHeight}`;
   const a = clone.querySelector("a");
-  a.href = json.url;
 
   a.textContent = json.url;
   a.target = "_blank";
@@ -255,7 +212,6 @@ function writeHTML(clone, img, json) {
   const { preset, url, contentType, contentLength, ...detailsObject } = json;
 
   for (let [key, value] of Object.entries(detailsObject)) {
-    console.log(key, value);
     const selector = clone.querySelector(`.${key}`);
 
     const result = key.replace(/([A-Z])/g, " $1");
@@ -302,7 +258,7 @@ $form.addEventListener("submit", async (e) => {
     return alert("URL is not from a supported domain");
   }
 
-  imgCode = value.split("?")[0];
+  imgCode = new URL(value).pathname;
   $csv.innerHTML = "";
   $root.innerHTML = "";
   $loading.classList.add("loader");
