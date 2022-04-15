@@ -77,7 +77,7 @@
 }
 
 .form-example {
-  margin: 20px;
+  margin: 20px 0;
 }
 
 img {
@@ -114,6 +114,7 @@ details {
 #loading {
   text-align: center;
 }
+
 
 .button {
   -webkit-user-select: none;
@@ -304,5 +305,11 @@ div.container {
           padding-left: var(--bs-gutter-x, 0.75rem); */
     margin-right: auto;
     margin-left: auto;
+  }
+
+
+
+  #url, #url-check {
+    width: 100%;
   }
 }
