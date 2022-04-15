@@ -1,5 +1,8 @@
 // base url
-let imgCode = "https://images.coach.com/is/image/Coach/c8529_b4ta7_a0";
+let imgCode =
+  localStorage.getItem("last-search") ||
+  "https://images.coach.com/is/image/Coach/c8529_b4ta7_a0";
+
 // // image paths
 // const COACH_DOMAIN =
 //   "https://wildcardsan.coach.com.edgekey-staging.net/is/image/Coach/";
@@ -258,7 +261,8 @@ $form.addEventListener("submit", async (e) => {
     return alert("URL is not from a supported domain");
   }
 
-  imgCode = new URL(value).pathname;
+  const urlObj = new URL(value);
+  imgCode = urlObj.origin + urlObj.pathname;
   $csv.innerHTML = "";
   $root.innerHTML = "";
   $loading.classList.add("loader");
@@ -267,6 +271,7 @@ $form.addEventListener("submit", async (e) => {
     .then((response) => response);
 
   await createAllImgs(data);
+  localStorage.setItem("last-search", imgCode);
 });
 
 $infoButton.addEventListener("click", triggerAlert);
