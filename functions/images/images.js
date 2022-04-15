@@ -42,7 +42,7 @@ const handler = async (event) => {
       server: response.headers.get("server"),
       encodingQuality: response.headers.get("x-im-encoding-quality"),
       staging: response.headers.get("x-akamai-staging") || false,
-      fileName: (fileName = response.headers.get("x-im-file-name")),
+      fileName: response.headers.get("x-im-file-name"),
       originalFormat: response.headers.get("x-im-original-format"),
       originalSize: response.headers.get("x-im-original-size"),
       originalWidth: response.headers.get("x-im-original-width"),
