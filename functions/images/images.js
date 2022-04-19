@@ -18,6 +18,7 @@ function setHostAndURL(url) {
     }`,
   };
 }
+
 const handler = async (event) => {
   const json = JSON.parse(event.body);
 
@@ -52,8 +53,9 @@ const handler = async (event) => {
       cacheStatus: response.headers.get("x-cache"),
     };
 
-    const data1 = await response.buffer();
-    const b64 = data1.toString("base64");
+    const buffer = await response.arrayBuffer();
+    const newBuffer = Buffer.from(buffer);
+    const b64 = newBuffer.toString("base64");
 
     let imgBody = `data:${response.headers.get("content-type")};base64,${b64}`;
 
@@ -61,7 +63,7 @@ const handler = async (event) => {
       statusCode: 200,
       body: JSON.stringify({ data, imgBody }),
       // // more keys you can return:
-      // headers: { "headerName": "headerValue", ... },
+      // headers: { ". },
       // isBase64Encoded: true,
     };
   } catch (error) {
