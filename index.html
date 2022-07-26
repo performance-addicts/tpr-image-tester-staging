@@ -4,12 +4,85 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tapestry Akamai Staging Product Image Tester</title>
+    <link rel="stylesheet" href="./assets/css/reset.min.css" />
+    <link rel="stylesheet" href="./assets/css/style.css" />
+    <link
+      rel="preload"
+      href="./assets/css/sa-dark.min.css"
+      as="style"
+      onload="this.onload=null;this.rel='stylesheet'"
+    />
+    <noscript
+      ><link rel="stylesheet" href="./assets/css/sa-dark.min.css"
+    /></noscript>
   </head>
   <body>
-    <h1>Under Construction</h1>
-    <img
-      src="./assets/images/under-construction.gif"
-      alt="under construction"
-    />
+    <div class="mb-2">
+      <a
+        href="https://tpr-image-tester.netlify.app/"
+        rel="noopener noreferrer"
+        target="_blank"
+        >Tapestry Akamai Production Product Image Tester</a
+      >
+    </div>
+    <h1 class="heading">Tapestry Akamai Staging Product Image Tester</h1>
+    <div class="container">
+      <button class="button info-button">
+        <span class="button__mask"></span>
+        <span class="button__text">HOW TO USE</span>
+        <span class="button__text button__text--bis">HOW TO USE</span>
+      </button>
+    </div>
+    <form class="form-example" id="url-check">
+      <div class="form-example">
+        <div>
+          <label for="name">URL: </label>
+        </div>
+        <input placeholder="Image URL" type="url" id="url" size="80" required />
+      </div>
+      <div class="form-example">
+        <button class="button">
+          <span class="button__mask"></span>
+          <span class="button__text">submit</span>
+          <span class="button__text button__text--bis">submit</span>
+        </button>
+      </div>
+    </form>
+
+    <div id="csv"></div>
+    <div id="loading" class="loader"></div>
+    <section id="root"></section>
+    <template id="product" class="card">
+      <div class="card-wrapper mb-2">
+        <h2 class="preset mb-2"></h2>
+        <h4 class="type mb-2"></h4>
+        <h4 class="size mb-2"></h4>
+        <h4 class="dimensions mb-2"></h4>
+        <h4 class="size-change mb-2"></h4>
+        <a class="url"></a>
+        <div class="data">
+          <details>
+            <summary>Details</summary>
+            <p class="ua"></p>
+            <p class="staging"></p>
+            <p class="server"></p>
+            <p class="fileName"></p>
+            <p class="encodingQuality"></p>
+            <p class="originalFormat"></p>
+            <p class="originalSize"></p>
+            <p class="originalWidth"></p>
+            <p class="resultWidth"></p>
+            <p class="pixelDensity"></p>
+            <p class="cacheKey"></p>
+            <p class="cacheStatus"></p>
+          </details>
+        </div>
+        <div class="img-wrap"></div>
+      </div>
+      <hr />
+      <br />
+    </template>
+    <script src="./assets/js/sweetalert2.min.js"></script>
+    <script src="./assets/js/script.js"></script>
   </body>
 </html>

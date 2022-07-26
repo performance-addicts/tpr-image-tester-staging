@@ -28,9 +28,6 @@ const presets = [
   "$mobileThumbnail$",
   "$tabletThumbnail$",
   "$desktopThumbnail$",
-  "$mobileSwatch$",
-  "$tabletSwatch$",
-  "$desktopSwatch$",
   "$desktopSwatchImage$",
   "$quickViewProduct$",
   "$imageRec$",
@@ -45,6 +42,9 @@ const presets = [
   "$mobileProductZoom$",
   "$tabletProductZoom$",
   "$desktopProductZoom$",
+  // "$mobileSwatch$",
+  // "$tabletSwatch$",
+  // "$desktopSwatch$",
   "",
 ];
 
